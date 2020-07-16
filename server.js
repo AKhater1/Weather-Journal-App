@@ -33,11 +33,11 @@ app.get('/all', function(req, res){
 
 const data = []
 
-app.post('/add', addWeather)
+app.post('/add', postData)
 
-function addWeather (req, res){
+function postData (req, res){
     console.log(req.body)
     data.push(req.body)
  }
 
- projectData["weather"] = data.weather
+ projectData["weather"] = newData.temp
