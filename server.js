@@ -30,14 +30,18 @@ app.get('/all', function(req, res){
 })
 
 //Post request
-
-const data = []
-
 app.post('/add', postData)
 
 function postData (req, res){
-    console.log(req.body)
-    data.push(req.body)
- }
+    
+    let data = req.body
+    console.log(data)
 
- projectData["weather"] = newData.temp
+    projectData['temp'] = data.temp
+    projectData['feel'] = data.feeling
+    projectData['date'] = data.date
+
+    res.send(projectData);
+
+    console.log('projectData ', projectData);
+ }

@@ -1,8 +1,6 @@
 /* Global Variables */
-const newZip = document.getElementById('zip').value;
-const newFeelings = document.getElementById('feelings').value;
-const apiKey = `&appid=439d4b804bc8187953eb36d2a8c26a02&units=imperial`;
-const baseUrl = `api.openweathermap.org/data/2.5/weather?zip=${newZip},us${apiKey}`;
+const baseURL = 'api.openweathermap.org/data/2.5/weather?zip=';
+const apiKey = ',us&appid=5069e840e9e95b7f2f573a29bd488147&units=imperial';
 
 // Create a new date instance dynamically with JS
 let d = new Date();
@@ -10,12 +8,14 @@ let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
 
 
 //Function to Get data
-const getWeather = async () => {
-    const res = await fetch(baseUrl)
+const getWeather = async (baseURL, zip, key) => {
+    
+    const res = await fetch(baseURL+zip+key)
 
     try{
         const data = await res.json();
         console.log(data)
+        return data;
     
     } catch(error) {
         console.log("error", error);
@@ -38,6 +38,7 @@ const postData = async ( url = '', data = {})=>{
         const newData = await response.json();
         console.log(newData);
         return newData
+
       }catch(error) {
       console.log("error", error);
       }
@@ -47,26 +48,32 @@ const postData = async ( url = '', data = {})=>{
 document.getElementById('generate').addEventListener('click', performAction)
 
 function performAction(e){
-    getWeather(baseUrl)
+
+    let zip = document.getElementById('zip').value;
+    let feeling = document.getElementById('feelings').value;
+
+    getWeather(baseURL, zip, apiKey)
 
     .then(function(data){
         console.log(data)
-
-        postData('/add', {date: newDate, temp: temp, content: newFeelings})
+        let temp = data.main.temp;
+        postData('/add', {temp: temp, feeling: feeling, date: newDate})
     })
-    .then(
+    .then(function(){
         updateUI()
-      )
+    })
 }
     
 const updateUI = async () => {
-    const request = await fetch(baseUrl);
+    const request = await fetch('/all');
     try{
-    const allData = await request.json();
-    document.getElementById('date').innerHTML = allData[0].date;
-    document.getElementById('temp').innerHTML = allData[0].temp;
-    document.getElementById('content').innerHTML = allData[0].content;
-
+    console.log('req', request)
+    const allData = await request.json()
+    console.log('allData', allData.feeling)
+    document.getElementById('temp').innerHTML = Math.round(allData[0].temp) + 'degrees'
+    document.getElementById('content').innerHTML = allData[0].feeling
+    document.getElementById('date').innerHTML = allData[0].date
+    
     }catch(error){
     console.log("error", error);
     }
